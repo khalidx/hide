@@ -34,3 +34,5 @@ hide run
 - [ ] Locking
 - [ ] Encryption in-transit and at-rest
 - [ ] Multiple users?
+- [ ] Remove logo (completely blows up npm package size)
+- [ ] Add license
