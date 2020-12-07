@@ -1,5 +1,3 @@
-#!/usr/bin/env ts-node-script
-
 import { hide, show, run } from './index'
 import { ApplicationError, error } from './error'
 
