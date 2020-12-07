@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { hide, show, run } from './index'
 import { ApplicationError, error } from './error'
 
