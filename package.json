@@ -1,6 +1,6 @@
 {
   "name": "@khalidx/hide",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Powerful, simple, durable secrets management.",
   "main": "dist/index.js",
   "bin": "dist/cli.js",
