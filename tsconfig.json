@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "rootDir": "src/",
+    "outDir": "dist/",
+    "moduleResolution": "node",
+    "lib": [ "ES2019" ],
+    "target": "ES5",
+    "strict": true
+  }
+}
