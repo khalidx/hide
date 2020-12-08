@@ -10,6 +10,11 @@ hide run
 
 *Quickstart*
 
+```sh
+npm install -g @khalidx/hide
+# or npx @khalidx/hide
+```
+
 1) Just type `hide` to make your `.secrets/` directory dissapear.
 2) Type `hide show` to bring it back.
 3) Using `hide run` lets you spawn a shell to run any command with your secrets automatically injected as environment variables.
@@ -36,3 +41,4 @@ hide run
 - [ ] Multiple users?
 - [ ] Remove logo (completely blows up npm package size)
 - [ ] Add license
+- [ ] instanceof doesn't work for es5
