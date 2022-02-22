@@ -16,6 +16,7 @@ import { secretsDirectory } from './fs'
 export async function show () {
   const secrets = await getObjects()
   if (secrets.length === 0) throw error('Nothing to show. No secrets found.')
+  console.log(`Found ${secrets.length} ${secrets.length === 1 ? 'secret' : 'secrets'}`)
   await ensureDir(secretsDirectory())
   await writeFile(join(secretsDirectory(), '.gitignore'), '*')
   await Promise.all(secrets.map(secret => writeFile(join(secretsDirectory(), secret.Key), secret.Body)))
