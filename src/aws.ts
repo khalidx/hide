@@ -7,7 +7,13 @@ const s3 = new S3()
 
 export async function putObjects (objects: Array<{ Key: string, Body: Promise<string> }>) {
   const Bucket = await getOrCreateBucketName()
-  return Promise.all(objects.map(async object => s3.putObject({ Bucket, Key: object.Key, Body: await object.Body }).promise()))
+  return Promise.all(objects.map(async object => s3.putObject({
+    Bucket,
+    Key: object.Key,
+    Body: await object.Body,
+    ServerSideEncryption: 'AES256',
+    BucketKeyEnabled: true
+  }).promise()))
 }
 
 export async function getObjects () {
@@ -26,9 +32,70 @@ async function getOrCreateBucketName () {
     if (error.code !== 'ParameterNotFound') throw error
     const name = `hide-bucket-${uuid()}`
     await Promise.all([
-      s3.createBucket({ Bucket: name }).promise(),
+      s3.createBucket({ Bucket: name, ACL: 'private' }).promise(),
       ssm.putParameter({ ...getParameterName(), Value: name, Type: 'String' }).promise()
     ])
+    await s3.putPublicAccessBlock({
+      Bucket: name,
+      PublicAccessBlockConfiguration: {
+        BlockPublicAcls: true,
+        BlockPublicPolicy: true,
+        IgnorePublicAcls: true,
+        RestrictPublicBuckets: true
+      }
+    }).promise()
+    await s3.putBucketEncryption({
+      Bucket: name,
+      ServerSideEncryptionConfiguration: {
+        Rules: [
+          {
+            BucketKeyEnabled: true,
+            ApplyServerSideEncryptionByDefault: {
+              SSEAlgorithm: 'AES256'
+            }
+          }
+        ]
+      }
+    }).promise()
+    await s3.putBucketPolicy({
+      Bucket: name,
+      Policy: JSON.stringify({
+        "Version": "2012-10-17",
+        "Id": "PutObjectPolicy",
+        "Statement": [
+          {
+            "Sid": "DenyIncorrectEncryptionHeader",
+            "Effect": "Deny",
+            "Principal": "*",
+            "Action": "s3:PutObject",
+            "Resource": `arn:aws:s3:::${name}/*`,
+            "Condition": {
+              "StringNotEquals": {
+                "s3:x-amz-server-side-encryption": "AES256"
+              }
+            }
+          },
+          {
+            "Sid": "DenyUnencryptedObjectUploads",
+            "Effect": "Deny",
+            "Principal": "*",
+            "Action": "s3:PutObject",
+            "Resource": `arn:aws:s3:::${name}/*`,
+            "Condition": {
+              "Null": {
+                "s3:x-amz-server-side-encryption": "true"
+              }
+            }
+          }
+        ]
+      })
+    }).promise()
+    await s3.putBucketVersioning({
+      Bucket: name,
+      VersioningConfiguration: {
+        Status: 'Enabled'
+      }
+    }).promise()
     return name
   }
 }
