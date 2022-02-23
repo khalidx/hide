@@ -10,6 +10,7 @@ import { secretsDirectory } from './fs'
  * ```sh
  * hide destroy
  * hide destroy --force
+ * ```
  * 
  */
 export async function destroy (args: string[]) {
