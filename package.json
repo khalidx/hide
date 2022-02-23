@@ -8,6 +8,7 @@
     "access": "public"
   },
   "scripts": {
+    "dev": "ts-node src/cli.ts",
     "build": "run-s build:*",
     "build:clean": "rimraf dist/ exec/",
     "build:node": "tsc",
