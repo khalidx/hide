@@ -15,7 +15,7 @@ async function cli (args: string[]) {
 }
 
 cli(process.argv.slice(2)).catch(error => {
-  if (error instanceof ApplicationError) console.error(error.message)
+  if (isApplicationError(error)) console.error(error.message)
   else console.error(error)
   process.exit(1)
 })
