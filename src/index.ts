@@ -1,3 +1,6 @@
 export { hide } from './hide'
 export { show } from './hide-show'
+export { list } from './hide-list'
 export { run } from './hide-run'
+export { info } from './hide-info'
+export { destroy } from './hide-destroy'

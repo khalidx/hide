@@ -33,7 +33,7 @@ async function getOrCreateBucketName () {
   }
 }
 
-async function getBucketName () {
+export async function getBucketName () {
   return getParameterValue()
 }
 
@@ -45,6 +45,20 @@ async function getParameterValue () {
   return value
 }
 
-function getParameterName () {
+export function getParameterName () {
   return { Name: '/hide/bucket' }
+}
+
+export async function deleteBucketAndBucketContents (name: string) {
+  const versions = await s3.listObjectVersions({ Bucket: name }).promise()
+  await Promise.all((versions.Versions || []).concat(versions.DeleteMarkers || []).map(version => {
+    return (version.Key && version.VersionId)
+      ? s3.deleteObject({ Bucket: name, Key: version.Key, VersionId: version.VersionId }).promise()
+      : undefined
+  }))
+  return await s3.deleteBucket({ Bucket: name }).promise()
+}
+
+export async function deleteParameter (name: string) {
+  return await ssm.deleteParameter({ Name: name }).promise()
 }
